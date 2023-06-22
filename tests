@@ -1,0 +1,17 @@
+import unittest
+import pytest
+class TestPolynomialRegression(unittest.TestCase):
+    def test_linear_regression(self):
+        x = np.array([1, 2, 3, 4, 5])
+        y = np.array([2, 4, 6, 8, 10])
+        degree = 1
+
+        coefficients, intercept, predictions = polynomial_regression(x, y, degree)
+
+        expected_coefficients = np.array([2.])
+        expected_intercept = 0.
+        expected_predictions = np.array([2., 4., 6., 8., 10.])
+
+        np.testing.assert_array_equal(coefficients, expected_coefficients)
+        np.testing.assert_almost_equal(intercept, expected_intercept)
+        np.testing.assert_array_equal(predictions, expected_predictions)
