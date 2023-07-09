@@ -1,22 +1,9 @@
 import psycopg2
-from datetime import date
-import numpy as np
-import json
 
-import numpy as np
-from sklearn.linear_model import LinearRegression
-from sklearn.preprocessing import PolynomialFeatures
-
-# Сюда вставить функцию либо импортировать модуль с функцией
-# def polynomial_regression(x, y, degree)
-
-
-def save_execution_result(x, y, degree):
-
-    # Создание таблицы
-    connection = psycopg2.connect(host='127.0.0.1', port='5432', database = 'testdb',  user = 'postgres', password = '123456')
-    cursor = connection.cursor()
-    create_table_query = """CREATE TABLE IF NOT EXISTS function_runs (
+# Создание таблицы
+connection = psycopg2.connect(host='127.0.0.1', port='5432', database = 'testdb',  user = 'postgres', password = '123456')
+cursor = connection.cursor()
+create_table_query = """CREATE TABLE IF NOT EXISTS function_runs (
     id SERIAL PRIMARY KEY,
     launch_date DATE NOT NULL,
     function_name TEXT NOT NULL,
@@ -25,40 +12,8 @@ def save_execution_result(x, y, degree):
     error_text TEXT
     )
     """
-    cursor.execute(create_table_query)
 
 
-    coefficients, intercept, predict = polynomial_regression(x, y, degree)
 
-    connection = psycopg2.connect(host='127.0.0.1', port='5432', database = 'testdb',  user = 'postgres', password = '123456')
-    cursor = connection.cursor()
-    print("Подключение установлено")
 
-    execution_date = date.today()
-    function_name = "polynomial_regression"
-    function_arguments = json.dumps({"x": x.tolist(), "y": y.tolist(), "degree": degree})
-    function_results = json.dumps({"coef": coefficients.tolist(), "intercept": str(intercept), "predict": predict.tolist()})
-    error_message = ""
-
-    try:
-        # Добавление данных
-        insert_query = "INSERT INTO function_runs (launch_date, function_name, function_arguments, function_result, error_text) VALUES (%s, %s, %s, %s, %s);"
-        cursor.execute(insert_query, (execution_date, function_name, function_arguments, function_results, error_message,))
-        connection.commit()
-        print("save")
-
-    except Exception as e:
-        error_message = str(e)
-        connection.rollback()
-
-    finally:
-        cursor.close()
-        connection.close()
-
-# Пример использования
-x = np.array([13, 66, -3, -99, 22, 38, 57, -85, -92, 85])  # Вектор значений признака
-y = np.array([27, 6, 72, 4, 7, -86, -10, 24, -14, -92])  # Вектор целевых значений
-
-degree = 3
-
-save_execution_result(x, y, degree)
+cursor.execute(create_table_query)
